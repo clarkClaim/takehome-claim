@@ -20,7 +20,8 @@
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset --force",
     "prisma:seed": "npx prisma db seed",
-    "quickstart": "npm run docker:up && npm run prisma:reset && npm run prisma:migrate && npm run prisma:seed && (npm run prisma:studio & npm run dev)"
+    "wait-for-postgres": "ts-node src/scripts/wait-for-postgres.ts",
+    "quickstart": "npm run docker:up && npm run wait-for-postgres && npm run prisma:reset && npm run prisma:migrate && npm run prisma:seed && (npm run prisma:studio & npm run dev)"
   },
   "prisma": {
     "seed": "ts-node prisma/seeds/index.ts"
