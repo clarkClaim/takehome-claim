@@ -3,7 +3,7 @@
 A GraphQL API built with Node.js, TypeScript, Prisma, and a Dockerized PostgreSQL database, designed to emulate a simplified version of Claim's backend.
 
 ## Take-home Tasks
-Choose one feature to implement.  
+Choose one feature to implement.  Catalog your thoughts, design decisions, and how you allocated your time, and what you would want to do next in a README.md file as you go.  Don't spend more than 5 hours on this project.
 
 If you select the "Small Feature", you should deliver review-ready and tested code. 
 
@@ -13,9 +13,10 @@ We will review your submission together via Zoom, discuss the tradeoffs that you
 
 
 ### General Guidence
-- The project is designed to be run locally with `npm run quickstart`, which will start the database, run migrations, seed the database, and start the dev server.  You do not need to modify any of the scripts in the `package.json` file.
+- The project is designed to be run locally with `npm run quickstart`, which will start the database, run migrations, seed the database, and start the dev server. 
+- Feel free to challenge or re-define any requirements.  This is a chance to show us how you work, and if you think you can add value in a different way, we want to hear about it.
 - You can use any libraries or tools you want, including copilot.
-- You should not spend more than 4 hours on this project.
+- You should not spend more than 5 hours on this project - we want to understand how you prioritize and trade off features, not how much you can grind through.
 - Skip unit testing for this project in favor of one or two integration tests with seed data.
 - Focus on clean, readable code over performance, edge cases, or perfect coverage.
 - Schema changes should be made in `schema.prisma`, and migrations should be created with `npx prisma migrate dev`.
@@ -36,7 +37,7 @@ V0 Requirements: Replace Redemption Payouts with Balance Deposits
 - All users start with a balance of 0
 - Users should be able to query their current balance
 - Users should be able to query all deposits associated with their balance
-- The existing redemption logic that creates a `payout` should be replaced with a function that updates the balance
+- The existing redemption logic that creates a `payout` should be replaced with a function that adds the `payout`'s value to their balance, instead
 - An Admin should be able to mark any deposit as fraudulent, which should revert the balance transaction and remove it from the user's balance.
 
 
