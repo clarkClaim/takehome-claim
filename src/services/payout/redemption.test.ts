@@ -12,7 +12,7 @@ describe('Payout Redemption End-to-End', () => {
     });
 
     it('should process a valid redemption for a new claim with matching transaction', async () => {
-        const aliId = "ali";
+        const aliId = 'ali';
         const sweetgreenId = 1;
         // Verify active claims count
         const user = await prisma.user.findUniqueOrThrow({
@@ -21,30 +21,32 @@ describe('Payout Redemption End-to-End', () => {
                 claims: {
                     where: User.types.activeClaimsWhere,
                     include: {
-                        campaign: true
-                    }
-                }
-            }
+                        campaign: true,
+                    },
+                },
+            },
         });
         expect(user.claims.length).toBe(1);
         // expect that one of the claims is for Sweetgreen
-        const sweetgreenClaim = user.claims.find(claim => claim?.campaign?.brand_id === sweetgreenId);
+        const sweetgreenClaim = user.claims.find(
+            (claim) => claim?.campaign?.brand_id === sweetgreenId
+        );
         expect(sweetgreenClaim).toBeDefined();
 
         // Verify redeemed and expired claims
         const redeemedClaims = await prisma.claim.findMany({
             where: {
                 owner_id: aliId,
-                ...User.types.redeemedClaimsWhere
-            }
+                ...User.types.redeemedClaimsWhere,
+            },
         });
         expect(redeemedClaims.length).toBe(1);
 
         const expiredClaims = await prisma.claim.findMany({
             where: {
                 owner_id: aliId,
-                ...User.types.expiredClaimsWhere
-            }
+                ...User.types.expiredClaimsWhere,
+            },
         });
         expect(expiredClaims.length).toBe(0);
 
@@ -53,21 +55,21 @@ describe('Payout Redemption End-to-End', () => {
         const activeClaimsAfterFirstTry = await prisma.claim.findMany({
             where: {
                 owner_id: aliId,
-                ...User.types.activeClaimsWhere
-            }
+                ...User.types.activeClaimsWhere,
+            },
         });
         expect(activeClaimsAfterFirstTry.length).toBe(1);
 
         // Add matching transaction
-        const transactionValue = 20.00;
+        const transactionValue = 20.0;
         const transaction = await prisma.financial_transaction.create({
             data: {
                 user_id: aliId,
                 brand_id: sweetgreenId,
                 amount: transactionValue,
                 date: DateTime.now().toJSDate(),
-                status: 'SETTLED'
-            }
+                status: 'SETTLED',
+            },
         });
 
         // Process redemptions
@@ -77,11 +79,11 @@ describe('Payout Redemption End-to-End', () => {
         const redeemedClaimsAfter = await prisma.claim.findMany({
             where: {
                 owner_id: aliId,
-                ...User.types.redeemedClaimsWhere
+                ...User.types.redeemedClaimsWhere,
             },
             include: {
-                payout: true
-            }
+                payout: true,
+            },
         });
         expect(redeemedClaimsAfter.length).toBe(2);
 
@@ -89,14 +91,14 @@ describe('Payout Redemption End-to-End', () => {
         const activeClaimsAfterSecondTry = await prisma.claim.findMany({
             where: {
                 owner_id: aliId,
-                ...User.types.activeClaimsWhere
-            }
+                ...User.types.activeClaimsWhere,
+            },
         });
         expect(activeClaimsAfterSecondTry.length).toBe(0);
 
         // Find the new payout
-        const newPayout = redeemedClaimsAfter.find(claim => 
-            claim.payout?.financial_transaction_id === transaction.id
+        const newPayout = redeemedClaimsAfter.find(
+            (claim) => claim.payout?.financial_transaction_id === transaction.id
         )?.payout;
 
         expect(newPayout).toBeDefined();
@@ -108,14 +110,14 @@ describe('Payout Redemption End-to-End', () => {
         expect(newPayout?.amount.toNumber()).toBe(expectedPayoutValue);
 
         // Wait for settlement
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Verify payout processing works as expected
         const settledPayout = await prisma.payout.findUniqueOrThrow({
-            where: { id: newPayout?.id }
+            where: { id: newPayout?.id },
         });
-        
+
         expect(settledPayout.status).toBe(payout_status.SETTLED);
         expect(settledPayout.settled_at).toBeDefined();
     });
-}); 
+});

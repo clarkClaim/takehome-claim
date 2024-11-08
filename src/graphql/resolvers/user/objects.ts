@@ -20,7 +20,7 @@ builder.prismaObject('user', {
                     ...query,
                     where: {
                         owner_id: user.id,
-                        ...User.types.activeClaimsWhere
+                        ...User.types.activeClaimsWhere,
                     },
                 });
             },
@@ -32,7 +32,7 @@ builder.prismaObject('user', {
                     ...query,
                     where: {
                         owner_id: user.id,
-                        ...User.types.expiredClaimsWhere
+                        ...User.types.expiredClaimsWhere,
                     },
                 });
             },
@@ -44,7 +44,7 @@ builder.prismaObject('user', {
                     ...query,
                     where: {
                         owner_id: user.id,
-                        ...User.types.redeemedClaimsWhere
+                        ...User.types.redeemedClaimsWhere,
                     },
                 });
             },

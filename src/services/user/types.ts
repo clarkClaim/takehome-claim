@@ -2,16 +2,16 @@ import { DateTime } from 'luxon';
 
 export const activeClaimsWhere = {
     expires_at: { gt: DateTime.now().toJSDate() },
-    payout: { is: null }
+    payout: { is: null },
 };
 
 export const expiredClaimsWhere = {
     expires_at: { lt: DateTime.now().toJSDate() },
-    payout: { is: null }
+    payout: { is: null },
 };
 
 export const redeemedClaimsWhere = {
-    payout: { isNot: null }
+    payout: { isNot: null },
 };
 
 export const activeClaimsInclude = {
@@ -19,9 +19,8 @@ export const activeClaimsInclude = {
     include: {
         campaign: {
             include: {
-                brand: true
-            }
-        }
-    }
+                brand: true,
+            },
+        },
+    },
 };
-

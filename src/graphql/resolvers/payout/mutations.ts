@@ -4,7 +4,6 @@ import { PayoutCreateInput } from './inputs';
 import { removeNullsFromType } from '../../../utils';
 import * as Payout from '../../../services/payout';
 
-
 builder.mutationField('insert_payout_one', (t) =>
     t.prismaField({
         type: 'payout',
@@ -15,7 +14,7 @@ builder.mutationField('insert_payout_one', (t) =>
             // TODO: Add sensible validations to payout inputs
             // assuming that any row created in this table would
             // result in an immediate cash payout to the user
-            const payout =await prisma.payout.create({
+            const payout = await prisma.payout.create({
                 ...query,
                 data: removeNullsFromType(args.data),
             });

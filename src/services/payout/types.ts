@@ -6,14 +6,16 @@ export const userRedemptionContextInclude = {
         claims: activeClaimsInclude,
         financial_transactions: {
             where: {
-                payout: { is: null }
-            }
-        }
-    }
+                payout: { is: null },
+            },
+        },
+    },
 };
 
-const userRedemptionContext = 
-    Prisma.validator<Prisma.userDefaultArgs>()(userRedemptionContextInclude);
+const userRedemptionContext = Prisma.validator<Prisma.userDefaultArgs>()(
+    userRedemptionContextInclude
+);
 
-export type UserRedemptionContext = 
-    Prisma.userGetPayload<typeof userRedemptionContext>; 
+export type UserRedemptionContext = Prisma.userGetPayload<
+    typeof userRedemptionContext
+>;
