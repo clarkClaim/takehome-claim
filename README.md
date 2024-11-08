@@ -30,6 +30,8 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 nvm install 18.6.0
 # use the installed version
 nvm use 18.6.0
+# confirm node version
+node -v # should return v18.6.0
 ```
 
 1. Install dependencies:
