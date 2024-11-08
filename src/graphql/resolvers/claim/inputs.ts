@@ -37,5 +37,6 @@ export const ClaimCreateInput = builder
         fields: (t) => ({
             campaign_id: t.int({ required: true }),
             owner_id: t.string({ required: true }),
+            value: t.field({ type: 'Decimal', required: true }),
         }),
     });

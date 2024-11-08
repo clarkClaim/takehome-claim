@@ -8,7 +8,7 @@ export default [
   {
     id: 1,
     user_id: "ali",
-    claim_id: 1,
+    claim_id: 2,
     financial_transaction_id: 1,
     amount: 10.00,
     status: payout_status.SETTLED,
@@ -19,7 +19,7 @@ export default [
   {
     id: 2,
     user_id: "bo",
-    claim_id: 4,
+    claim_id: 3,
     financial_transaction_id: 2,
     amount: 5.00,
     status: payout_status.SETTLED,
