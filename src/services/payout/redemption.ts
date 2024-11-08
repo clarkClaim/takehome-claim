@@ -6,7 +6,7 @@ import {
     financial_transaction,
     payout_status,
 } from '@prisma/client';
-import { userRedemptionContextInclude, UserRedemptionContext } from './types';
+import { userRedemptionContextInclude } from './types';
 import { DateTime } from 'luxon';
 
 type RedemptionMatch = {

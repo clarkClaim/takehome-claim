@@ -15,7 +15,7 @@ builder.prismaObject('user', {
         owned_claims: t.relation('claims'),
         active_claims: t.prismaField({
             type: ['claim'],
-            resolve: async (query, user, args) => {
+            resolve: async (query, user) => {
                 return await prisma.claim.findMany({
                     ...query,
                     where: {
@@ -27,7 +27,7 @@ builder.prismaObject('user', {
         }),
         expired_claims: t.prismaField({
             type: ['claim'],
-            resolve: async (query, user, args) => {
+            resolve: async (query, user) => {
                 return await prisma.claim.findMany({
                     ...query,
                     where: {
@@ -39,7 +39,7 @@ builder.prismaObject('user', {
         }),
         redeemed_claims: t.prismaField({
             type: ['claim'],
-            resolve: async (query, user, args) => {
+            resolve: async (query, user) => {
                 return await prisma.claim.findMany({
                     ...query,
                     where: {
