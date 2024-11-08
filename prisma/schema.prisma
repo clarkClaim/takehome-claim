@@ -1,0 +1,91 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+generator pothos {
+    provider = "prisma-pothos-types"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model user {
+    id                    String                  @id
+    name                  String
+    email                 String                  @unique
+    phone_number          String                  @unique
+    created_at            DateTime                @default(now()) @db.Timestamptz(6)
+    updated_at            DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
+    claim                 claim[]
+    financial_transaction financial_transaction[]
+    payout                payout[]
+}
+
+model brand {
+    id         Int        @id @default(autoincrement())
+    name       String
+    created_at DateTime   @default(now()) @db.Timestamptz(6)
+    updated_at DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+    campaign   campaign[]
+}
+
+model campaign {
+    id         Int      @id @default(autoincrement())
+    brand_id   Int
+    name       String
+    value      Decimal
+    created_at DateTime @default(now()) @db.Timestamptz(6)
+    updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+    brand      brand    @relation(fields: [brand_id], references: [id])
+    claim      claim[]
+}
+
+model claim {
+    id          Int      @id @default(autoincrement())
+    campaign_id Int
+    created_at  DateTime @default(now()) @db.Timestamptz(6)
+    updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+    expires_at  DateTime @default(dbgenerated("(now() + '7 days'::interval)")) @db.Timestamptz(6)
+    owner_id    String
+    campaign    campaign @relation(fields: [campaign_id], references: [id])
+    owner       user     @relation(fields: [owner_id], references: [id])
+    payout      payout?
+}
+
+model financial_transaction {
+    id       Int                          @id @default(autoincrement())
+    user_id  String
+    brand_id Int
+    amount   Decimal
+    date     DateTime                     @db.Date
+    status   financial_transaction_status
+    user     user                         @relation(fields: [user_id], references: [id])
+    payout   payout?
+}
+
+model payout {
+    id                       Int                    @id @default(autoincrement())
+    user_id                  String
+    claim_id                 Int                    @unique
+    amount                   Decimal
+    financial_transaction_id Int?                   @unique
+    status                   payout_status
+    created_at               DateTime               @default(now()) @db.Timestamptz(6)
+    updated_at               DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+    settled_at               DateTime?
+    claim                    claim                  @relation(fields: [claim_id], references: [id])
+    user                     user                   @relation(fields: [user_id], references: [id])
+    financial_transaction    financial_transaction? @relation(fields: [financial_transaction_id], references: [id])
+}
+
+enum financial_transaction_status {
+    PENDING
+    SETTLED
+}
+
+enum payout_status {
+    PENDING
+    SETTLED
+}
