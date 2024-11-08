@@ -36,8 +36,9 @@ V0 Requirements: Replace Redemption Payouts with Balance Deposits
 - All users start with a balance of 0
 - Users should be able to query their current balance
 - Users should be able to query all deposits associated with their balance
-- An Admin should be able to mark any deposit as fraudulent, which should revert the balance transaction and remove it from the user's balance.
 - The existing redemption logic that creates a `payout` should be replaced with a function that updates the balance
+- An Admin should be able to mark any deposit as fraudulent, which should revert the balance transaction and remove it from the user's balance.
+
 
 V1 Requirements (not in scope of this take-home, but important to consider when building the V0): Withdrawals
 - Users should be able to initiate a withdrawl, but it should not be processed until 2 business days after the request
