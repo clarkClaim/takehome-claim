@@ -3,6 +3,7 @@ import { prisma } from '../../../connectors/db';
 import { PayoutCreateInput } from './inputs';
 import { removeNullsFromType } from '../../../utils';
 import * as Payout from '../../../services/payout';
+import { RedemptionService } from '../../../services/payout/redemption';
 
 builder.mutationField('insert_payout_one', (t) =>
     t.prismaField({
@@ -28,7 +29,8 @@ builder.mutationField('process_user_redemptions', (t) =>
         type: ['payout'],
         args: { userId: t.arg({ type: 'String', required: true }) },
         resolve: async (query, root, args) => {
-            return await Payout.redemption.processUserRedemptions(args.userId);
+            const redemption = new RedemptionService();
+            return await redemption.processRedemptions(args.userId);
         },
     })
 );

@@ -1,5 +1,5 @@
 import { prisma } from '../../connectors/db';
-import * as Payout from '.';
+import { RedemptionService } from './redemption';
 import * as User from '../user';
 import { DateTime } from 'luxon';
 import { execSync } from 'child_process';
@@ -51,7 +51,8 @@ describe('Payout Redemption End-to-End', () => {
         expect(expiredClaims.length).toBe(0);
 
         // Try redemption without transaction
-        await Payout.redemption.processUserRedemptions(aliId);
+        const redemption = new RedemptionService();
+        await redemption.processRedemptions(aliId);
         const activeClaimsAfterFirstTry = await prisma.claim.findMany({
             where: {
                 owner_id: aliId,
@@ -73,7 +74,7 @@ describe('Payout Redemption End-to-End', () => {
         });
 
         // Process redemptions
-        await Payout.redemption.processUserRedemptions(aliId);
+        await redemption.processRedemptions(aliId);
 
         // Verify redeemed claim
         const redeemedClaimsAfter = await prisma.claim.findMany({
