@@ -65,24 +65,25 @@ export class RedemptionService {
         return redeemedClaims;
     };
 
-    private createPayout = async (match: RedeemedClaim) => {
+    private createPayout = async (redeemedClaims: RedeemedClaim) => {
         const payoutAmount = Prisma.Decimal.min(
-            match.claim.value,
-            match.financial_transaction.amount
+            redeemedClaims.claim.value,
+            redeemedClaims.financial_transaction.amount
         );
 
         if (payoutAmount.lte(0)) {
             console.log(
-                `Payout amount is less than or equal to 0 for claim ${match.claim.id}`
+                `Payout amount is less than or equal to 0 for claim ${redeemedClaims.claim.id}`
             );
             return null;
         }
 
         return await prisma.payout.create({
             data: {
-                user_id: match.claim.owner_id,
-                claim_id: match.claim.id,
-                financial_transaction_id: match.financial_transaction.id,
+                user_id: redeemedClaims.claim.owner_id,
+                claim_id: redeemedClaims.claim.id,
+                financial_transaction_id:
+                    redeemedClaims.financial_transaction.id,
                 amount: payoutAmount,
                 status: payout_status.APPROVED,
             },
