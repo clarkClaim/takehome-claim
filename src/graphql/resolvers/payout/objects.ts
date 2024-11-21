@@ -8,7 +8,7 @@ builder.prismaObject('payout', {
         claim_id: t.exposeInt('claim_id'),
         amount: t.expose('amount', { type: 'Decimal' }),
         status: t.expose('status', { type: payout_status }),
-        financial_transaction_id: t.exposeInt('financial_transaction_id', {
+        purchase_id: t.exposeInt('purchase_id', {
             nullable: true,
         }),
         created_at: t.expose('created_at', { type: 'DateTime' }),
@@ -19,7 +19,7 @@ builder.prismaObject('payout', {
         }),
         user: t.relation('user'),
         claim: t.relation('claim'),
-        financial_transaction: t.relation('financial_transaction', {
+        purchase: t.relation('purchase', {
             nullable: true,
         }),
     }),

@@ -4,7 +4,7 @@ import { activeClaimsInclude } from '../user/types';
 export const userRedemptionContextInclude = {
     include: {
         claims: activeClaimsInclude,
-        financial_transactions: {
+        purchases: {
             where: {
                 payout: { is: null },
             },
