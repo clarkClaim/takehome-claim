@@ -25,30 +25,30 @@ export class RedemptionService {
         });
 
         const redeemedClaims: RedeemedClaim[] = [];
-        const usedTransactionIds = new Set<number>();
+        const usedPurchaseIds = new Set<number>();
 
-        // Match claims with unused transactions based on brand_id and dates
+        // Match claims with unused purchases based on brand_id and dates
         for (const claim of user.claims) {
             const brandId = claim.campaign.brand.id;
 
-            const matchingTransactions = user.purchases.filter(
+            const matchingPurchases = user.purchases.filter(
                 (purchase) =>
-                    // Match Claims to transactions with the same brand_id
+                    // Match Claims to purchases with the same brand_id
                     purchase.brand_id === brandId &&
                     // where the transaction date is on or after the date (note: not time, as financial_transactions
                     // are rounded to the nearest day) that the Claim was created
                     DateTime.fromJSDate(purchase.date) >=
                         DateTime.fromJSDate(claim.created_at).startOf('day') &&
                     // and the transaction has not already been used for a payout
-                    !usedTransactionIds.has(purchase.id) &&
+                    !usedPurchaseIds.has(purchase.id) &&
                     // and the transaction amount is greater than a minimum amount of $1
                     purchase.amount.gte(1)
             );
 
             // Only use first matching transaction
-            if (matchingTransactions.length > 0) {
-                const tx = matchingTransactions[0];
-                usedTransactionIds.add(tx.id);
+            if (matchingPurchases.length > 0) {
+                const tx = matchingPurchases[0];
+                usedPurchaseIds.add(tx.id);
                 redeemedClaims.push({
                     claim,
                     purchase: tx,

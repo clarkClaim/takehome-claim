@@ -110,7 +110,7 @@ V1 Requirements (not in scope of this take-home, but important to consider when 
 
 ### Other "Large Feature" Ideas
 
--   Integrate with Plaid to fetch bank transactions, identify transactions that match `brands` on Claim, and create `financial_transactions` rows for qualifying transactions.
+-   Integrate with Plaid to fetch bank transactions, identify transactions that match `brands` on Claim, and create `purchases` rows for qualifying transactions.
 -   Add the ability for `users` to trade `claims`, keeping in mind the redemption flow. Bonus points: create a market / orderbook, rather than peer-to-peer trading
 -   Create a `timed_drop` that distributes three `campaign_assignments` to `users`. The `user` gets to choose which `campaign_assignment` they accept, which should automatically create a `claim` that they own based on the `campaign` values. Bonus points: come up with a recommendation algorithm to determine which `campaigns` it would be best for Claim to assign to each user.
 
@@ -119,15 +119,15 @@ V1 Requirements (not in scope of this take-home, but important to consider when 
 -   **Brand**: A partner company that offers cashback rewards to **Users**
 -   **User**: A user of the app
 -   **Campaign**: A general cashback reward offer that a **Brand** is willing to make to **Users**
--   **Claim**: A specific instance of a **Campaign** that a **User** has received, with a value, expiration date, etc. Can be redeemed for a **Payout**, if the User makes a qualifying **Financial Transaction** at the Brand
--   **Financial Transaction**: A record of a user's financial activity, such as a credit card transaction, made at a partner **Brand**
+-   **Claim**: A specific instance of a **Campaign** that a **User** has received, with a value, expiration date, etc. Can be redeemed for a **Payout**, if the User makes a qualifying **Purchase** at the Brand
+-   **Purchase**: A record of a user's purchase history, such as a credit card transaction, made at a partner **Brand**
 -   **Payout**: A payment made to a **User** for redeeming a **Claim**
 
 ## Project Structure notes
 
 -   `src/`: Source code
 -   `src/graphql/`: GraphQL endpoints and related files, including resolvers for each object type.
--   `src/services/`: Business logic, such as payout processing, identifying redemable `claims` with matching `financial_transactions`, defining "active" or "expired" `claims`, etc.
+-   `src/services/`: Business logic, such as payout processing, identifying redemable `claims` with matching `purchases`, defining "active" or "expired" `claims`, etc.
 -   `prisma/schema.prisma`: Prisma database schema definitions - this is where the database schema is defined and edited.
 -   `prisma/seeds/`: Seed data for the database
 
