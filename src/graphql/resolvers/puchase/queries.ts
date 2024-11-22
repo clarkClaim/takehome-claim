@@ -1,24 +1,21 @@
 import { builder } from '../../schema/builder';
-import {
-    FinancialTransactionWhereInput,
-    FinancialTransactionOrderByInput,
-} from './inputs';
+import { PurchaseWhereInput, PurchaseOrderByInput } from './inputs';
 import { prisma } from '../../../connectors/db';
 import { removeNullsFromType } from '../../../utils';
 
-builder.queryField('financial_transaction', (t) =>
+builder.queryField('purchase', (t) =>
     t.prismaField({
-        type: ['financial_transaction'],
+        type: ['purchase'],
         args: {
-            where: t.arg({ type: FinancialTransactionWhereInput }),
-            orderBy: t.arg({ type: FinancialTransactionOrderByInput }),
+            where: t.arg({ type: PurchaseWhereInput }),
+            orderBy: t.arg({ type: PurchaseOrderByInput }),
             limit: t.arg.int(),
             offset: t.arg.int(),
         },
         resolve: async (query, root, args) => {
             const where = removeNullsFromType(args.where);
             const orderBy = removeNullsFromType(args.orderBy);
-            return await prisma.financial_transaction.findMany({
+            return await prisma.purchase.findMany({
                 ...query,
                 take: args?.limit || undefined,
                 skip: args?.offset || undefined,
@@ -29,19 +26,18 @@ builder.queryField('financial_transaction', (t) =>
     })
 );
 
-builder.queryField('financial_transaction_by_pk', (t) =>
+builder.queryField('purchase_by_pk', (t) =>
     t.prismaField({
-        description: 'Get a financial transaction by its primary key',
-        type: 'financial_transaction',
+        description: 'Get a purchase by its primary key',
+        type: 'purchase',
         args: {
             id: t.arg.int({ required: true }),
         },
         resolve: async (query, root, { id }) => {
-            const transaction =
-                await prisma.financial_transaction.findUniqueOrThrow({
-                    ...query,
-                    where: { id },
-                });
+            const transaction = await prisma.purchase.findUniqueOrThrow({
+                ...query,
+                where: { id },
+            });
             return transaction;
         },
     })

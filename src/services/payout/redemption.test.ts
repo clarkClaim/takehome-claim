@@ -11,7 +11,7 @@ describe('Payout Redemption End-to-End', () => {
         execSync('npm run prisma:reset -- --force', { stdio: 'inherit' });
     });
 
-    it('should process a valid redemption for a new claim with matching transaction', async () => {
+    it('should process a valid redemption for a new claim with matching purchase', async () => {
         const aliId = 'ali';
         const sweetgreenId = 1;
         // Verify active claims count
@@ -50,7 +50,7 @@ describe('Payout Redemption End-to-End', () => {
         });
         expect(expiredClaims.length).toBe(0);
 
-        // Try redemption without transaction
+        // Try redemption without purchase
         const redemption = new RedemptionService();
         await redemption.processRedemptions(aliId);
         const activeClaimsAfterFirstTry = await prisma.claim.findMany({
@@ -62,12 +62,12 @@ describe('Payout Redemption End-to-End', () => {
         expect(activeClaimsAfterFirstTry.length).toBe(1);
 
         // Add matching transaction
-        const transactionValue = 20.0;
-        const transaction = await prisma.financial_transaction.create({
+        const purchaseValue = 20.0;
+        const purchase = await prisma.purchase.create({
             data: {
                 user_id: aliId,
                 brand_id: sweetgreenId,
-                amount: transactionValue,
+                amount: purchaseValue,
                 date: DateTime.now().toJSDate(),
                 status: 'SETTLED',
             },
@@ -99,14 +99,14 @@ describe('Payout Redemption End-to-End', () => {
 
         // Find the new payout
         const newPayout = redeemedClaimsAfter.find(
-            (claim) => claim.payout?.financial_transaction_id === transaction.id
+            (claim) => claim.payout?.purchase_id === purchase.id
         )?.payout;
 
         expect(newPayout).toBeDefined();
 
         // The expected claim value should be the lesser of the transaction value or the claim value
         const claimValue = sweetgreenClaim?.value.toNumber() ?? 0;
-        const expectedPayoutValue = Math.min(transactionValue, claimValue);
+        const expectedPayoutValue = Math.min(purchaseValue, claimValue);
 
         expect(newPayout?.amount.toNumber()).toBe(expectedPayoutValue);
 

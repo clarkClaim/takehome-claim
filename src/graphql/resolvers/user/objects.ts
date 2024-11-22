@@ -10,7 +10,7 @@ builder.prismaObject('user', {
         name: t.exposeString('name'),
         created_at: t.expose('created_at', { type: 'DateTime' }),
         updated_at: t.expose('updated_at', { type: 'DateTime' }),
-        financial_transactions: t.relation('financial_transactions'),
+        purchases: t.relation('purchases'),
         payouts: t.relation('payouts'),
         owned_claims: t.relation('claims'),
         active_claims: t.prismaField({

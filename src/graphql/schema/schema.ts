@@ -7,7 +7,7 @@ import '../resolvers/user/index';
 import '../resolvers/brand/index';
 import '../resolvers/campaign/index';
 import '../resolvers/claim/index';
-import '../resolvers/financial_transaction/index';
+import '../resolvers/puchase/index';
 import '../resolvers/payout/index';
 
 export const schema = builder.toSchema({});

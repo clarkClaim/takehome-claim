@@ -1,12 +1,6 @@
 import { prisma } from '../../connectors/db';
 import * as Payout from '.';
-import {
-    Prisma,
-    claim,
-    financial_transaction,
-    payout,
-    payout_status,
-} from '@prisma/client';
+import { Prisma, claim, purchase, payout, payout_status } from '@prisma/client';
 import { userRedemptionContextInclude } from './types';
 import { DateTime } from 'luxon';
 
@@ -18,7 +12,7 @@ type RedeemedClaim = {
             };
         };
     };
-    financial_transaction: financial_transaction;
+    purchase: purchase;
 };
 
 export class RedemptionService {
@@ -37,18 +31,18 @@ export class RedemptionService {
         for (const claim of user.claims) {
             const brandId = claim.campaign.brand.id;
 
-            const matchingTransactions = user.financial_transactions.filter(
-                (tx) =>
+            const matchingTransactions = user.purchases.filter(
+                (purchase) =>
                     // Match Claims to transactions with the same brand_id
-                    tx.brand_id === brandId &&
+                    purchase.brand_id === brandId &&
                     // where the transaction date is on or after the date (note: not time, as financial_transactions
                     // are rounded to the nearest day) that the Claim was created
-                    DateTime.fromJSDate(tx.date) >=
+                    DateTime.fromJSDate(purchase.date) >=
                         DateTime.fromJSDate(claim.created_at).startOf('day') &&
                     // and the transaction has not already been used for a payout
-                    !usedTransactionIds.has(tx.id) &&
+                    !usedTransactionIds.has(purchase.id) &&
                     // and the transaction amount is greater than a minimum amount of $1
-                    tx.amount.gte(1)
+                    purchase.amount.gte(1)
             );
 
             // Only use first matching transaction
@@ -57,7 +51,7 @@ export class RedemptionService {
                 usedTransactionIds.add(tx.id);
                 redeemedClaims.push({
                     claim,
-                    financial_transaction: tx,
+                    purchase: tx,
                 });
             }
         }
@@ -65,25 +59,24 @@ export class RedemptionService {
         return redeemedClaims;
     };
 
-    private createPayout = async (redeemedClaims: RedeemedClaim) => {
+    private createPayout = async (redeemedClaim: RedeemedClaim) => {
         const payoutAmount = Prisma.Decimal.min(
-            redeemedClaims.claim.value,
-            redeemedClaims.financial_transaction.amount
+            redeemedClaim.claim.value,
+            redeemedClaim.purchase.amount
         );
 
         if (payoutAmount.lte(0)) {
             console.log(
-                `Payout amount is less than or equal to 0 for claim ${redeemedClaims.claim.id}`
+                `Payout amount is less than or equal to 0 for claim ${redeemedClaim.claim.id}`
             );
             return null;
         }
 
         return await prisma.payout.create({
             data: {
-                user_id: redeemedClaims.claim.owner_id,
-                claim_id: redeemedClaims.claim.id,
-                financial_transaction_id:
-                    redeemedClaims.financial_transaction.id,
+                user_id: redeemedClaim.claim.owner_id,
+                claim_id: redeemedClaim.claim.id,
+                purchase_id: redeemedClaim.purchase.id,
                 amount: payoutAmount,
                 status: payout_status.APPROVED,
             },
