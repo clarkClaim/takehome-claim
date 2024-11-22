@@ -35,7 +35,7 @@ export class RedemptionService {
                 (purchase) =>
                     // Match Claims to purchases with the same brand_id
                     purchase.brand_id === brandId &&
-                    // where the transaction date is on or after the date (note: not time, as financial_transactions
+                    // where the transaction date is on or after the date (note: not time, as purchases
                     // are rounded to the nearest day) that the Claim was created
                     DateTime.fromJSDate(purchase.date) >=
                         DateTime.fromJSDate(claim.created_at).startOf('day') &&
